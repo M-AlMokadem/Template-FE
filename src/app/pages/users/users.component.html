@@ -1,0 +1,82 @@
+<section class="users-page">
+  <mat-card class="users-card" appearance="outlined">
+    <div class="users-header">
+      <div>
+        <p class="eyebrow">Administration</p>
+        <h1>Users Directory</h1>
+      </div>
+
+      <form class="search-form" (ngSubmit)="search()">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Search users</mat-label>
+          <input
+            matInput
+            type="text"
+            name="searchTerm"
+            placeholder="Name or email"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)"
+            (keyup.enter)="search()"
+          >
+        </mat-form-field>
+        <button mat-flat-button type="submit">Apply</button>
+      </form>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-box">
+        <mat-spinner diameter="34"></mat-spinner>
+        <p>Loading users...</p>
+      </div>
+    } @else {
+      @if (users().length > 0) {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th class="actions">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of users(); track user.id) {
+                <tr>
+                  <td>{{ user.fullName }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>
+                    <span class="status-pill" [class.is-active]="user.isActive">
+                      {{ user.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                  </td>
+                  <td class="actions">
+                    <button mat-button type="button" (click)="toggleStatus(user)">
+                      {{ user.isActive ? 'Deactivate' : 'Activate' }}
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pager">
+          <p>
+            Showing {{ startItemIndex() }} - {{ endItemIndex() }} of {{ totalCount() }}
+          </p>
+          <div class="pager-actions">
+            <button mat-button type="button" (click)="previousPage()" [disabled]="pageNumber() <= 1">Previous</button>
+            <span>Page {{ pageNumber() }} of {{ totalPages() }}</span>
+            <button mat-button type="button" (click)="nextPage()" [disabled]="!hasNextPage()">Next</button>
+          </div>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <h2>No users found</h2>
+          <p>Try a different search term or clear your filter.</p>
+        </div>
+      }
+    }
+  </mat-card>
+</section>

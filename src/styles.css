@@ -15,3 +15,13 @@ body {
 	font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 	color: #18214d;
 }
+
+.toast-error {
+	background: linear-gradient(135deg, #8f1f2b, #b13545) !important;
+	color: #ffffff !important;
+}
+
+.toast-success {
+	background: linear-gradient(135deg, #106c4f, #0f7f66) !important;
+	color: #ffffff !important;
+}

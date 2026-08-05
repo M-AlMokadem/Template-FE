@@ -1,18 +1,27 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
+import { ErrorResult } from './models/error-result.model';
 import { ToastService } from './services/toast.service';
 
 function toFriendlyMessage(error: HttpErrorResponse): string {
-  const backendMessage = error.error?.message;
+  const errorPayload = error.error as ErrorResult | undefined;
+  const backendMessage = errorPayload?.message;
   if (typeof backendMessage === 'string' && backendMessage.trim().length > 0) {
     return backendMessage;
   }
 
-  const validationErrors = error.error?.errors;
-  if (validationErrors && typeof validationErrors === 'object') {
+  const validationErrors = errorPayload?.errors;
+  if (validationErrors && typeof validationErrors === 'object' && !Array.isArray(validationErrors)) {
     const firstError = Object.values(validationErrors).flat().find((value) => typeof value === 'string');
     if (typeof firstError === 'string' && firstError.trim().length > 0) {
+      return firstError;
+    }
+  }
+
+  if (Array.isArray(validationErrors)) {
+    const firstError = validationErrors.find((value) => typeof value === 'string' && value.trim().length > 0);
+    if (firstError) {
       return firstError;
     }
   }
