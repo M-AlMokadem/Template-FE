@@ -54,8 +54,8 @@ export class UsersApiService {
       .pipe(map((response) => this.normalizeResult(response)));
   }
 
-  getCurrentProfile(): Observable<{ id: string; fullName: string; email: string }> {
-    return this.apiCore.get<{ id: string; fullName: string; email: string }>('auth/me');
+  getCurrentProfile(): Observable<{ id: string; fullName: string; email: string; roles: string[] }> {
+    return this.apiCore.get<{ id: string; fullName: string; email: string; roles: string[] }>('auth/me');
   }
 
   private normalizeResult<T>(response: HttpResponseModel<T>): ApiResult<T> {

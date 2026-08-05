@@ -30,6 +30,10 @@ function toFriendlyMessage(error: HttpErrorResponse): string {
     return 'Unable to reach the server. Please check your connection.';
   }
 
+  if (error.status === 403) {
+    return 'You do not have permission to perform this action.';
+  }
+
   if (error.status >= 500) {
     return 'A server error occurred. Please try again.';
   }

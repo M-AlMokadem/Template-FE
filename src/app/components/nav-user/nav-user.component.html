@@ -4,6 +4,9 @@
 		<div class="user-copy">
 			<span class="user-name">{{ user.fullName }}</span>
 			<span class="user-email">{{ user.email }}</span>
+			@if (user.roles.length > 0) {
+				<span class="user-email">{{ user.roles.join(' • ') }}</span>
+			}
 		</div>
 		<button mat-button type="button" class="logout-button" (click)="logout()">Logout</button>
 	</div>

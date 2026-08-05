@@ -7,6 +7,7 @@ export interface AuthUser {
 	id: string;
 	fullName: string;
 	email: string;
+	roles: string[];
 }
 
 export interface LoginPayload {
@@ -40,6 +41,11 @@ export class AuthService {
 	readonly currentUser = computed(() => this.sessionState()?.user ?? null);
 	readonly isAuthenticated = computed(() => this.sessionState() !== null);
 	private readonly authApiUrl = `${this.appConfigService.serverUrl}auth`;
+
+	hasRole(role: string): boolean {
+		const roles = this.currentUser()?.roles ?? [];
+		return roles.includes(role);
+	}
 
 	async login(payload: LoginPayload): Promise<void> {
 		const response = await firstValueFrom(this.httpClient.post<AuthSession>(`${this.authApiUrl}/login`, payload));
@@ -84,7 +90,14 @@ export class AuthService {
 		}
 
 		try {
-			return JSON.parse(rawValue) as AuthSession;
+			const session = JSON.parse(rawValue) as AuthSession;
+			return {
+				...session,
+				user: {
+					...session.user,
+					roles: session.user.roles ?? []
+				}
+			};
 		} catch {
 			localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
 			return null;

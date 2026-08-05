@@ -17,6 +17,7 @@ export const routes: Routes = [
 	{
 		path: 'users',
 		canActivate: [authGuard],
+		data: { roles: ['Admin'] },
 		loadComponent: () => import('./pages/users/users.component').then((module) => module.UsersComponent)
 	}
 ];

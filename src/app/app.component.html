@@ -4,7 +4,9 @@
     <span class="topbar-spacer"></span>
     <nav class="topbar-nav" aria-label="Primary">
       <a mat-button routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Overview</a>
-      <a mat-button routerLink="/users" routerLinkActive="is-active">Users</a>
+      @if (canManageUsers()) {
+        <a mat-button routerLink="/users" routerLinkActive="is-active">Users</a>
+      }
       <a mat-button href="#features">Features</a>
       <a mat-button href="#metrics">Metrics</a>
       <a mat-button routerLink="/login" routerLinkActive="is-active">Login</a>
