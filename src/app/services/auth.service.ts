@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { AppConfigService } from './app-config.service';
 
 export interface AuthUser {
 	id: string;
@@ -26,26 +27,27 @@ interface AuthSession {
 	user: AuthUser;
 }
 
-const STORAGE_KEY = 'versionzero.auth.session';
-const API_BASE_URL = 'http://localhost:5186/api/auth';
+export const AUTH_SESSION_STORAGE_KEY = 'versionzero.auth.session';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class AuthService {
 	private readonly httpClient = inject(HttpClient);
+	private readonly appConfigService = inject(AppConfigService);
 	private readonly sessionState = signal<AuthSession | null>(this.readStoredSession());
 
 	readonly currentUser = computed(() => this.sessionState()?.user ?? null);
 	readonly isAuthenticated = computed(() => this.sessionState() !== null);
+	private readonly authApiUrl = `${this.appConfigService.serverUrl}auth`;
 
 	async login(payload: LoginPayload): Promise<void> {
-		const response = await firstValueFrom(this.httpClient.post<AuthSession>(`${API_BASE_URL}/login`, payload));
+		const response = await firstValueFrom(this.httpClient.post<AuthSession>(`${this.authApiUrl}/login`, payload));
 		this.persistSession(response);
 	}
 
 	async register(payload: RegisterPayload): Promise<void> {
-		const response = await firstValueFrom(this.httpClient.post<AuthSession>(`${API_BASE_URL}/register`, payload));
+		const response = await firstValueFrom(this.httpClient.post<AuthSession>(`${this.authApiUrl}/register`, payload));
 		this.persistSession(response);
 	}
 
@@ -54,7 +56,7 @@ export class AuthService {
 
 		if (token) {
 			try {
-				await firstValueFrom(this.httpClient.post(`${API_BASE_URL}/logout`, {}, {
+				await firstValueFrom(this.httpClient.post(`${this.authApiUrl}/logout`, {}, {
 					headers: this.createAuthHeaders(token)
 				}));
 			} catch {
@@ -75,7 +77,7 @@ export class AuthService {
 			return null;
 		}
 
-		const rawValue = localStorage.getItem(STORAGE_KEY);
+		const rawValue = localStorage.getItem(AUTH_SESSION_STORAGE_KEY);
 
 		if (!rawValue) {
 			return null;
@@ -84,7 +86,7 @@ export class AuthService {
 		try {
 			return JSON.parse(rawValue) as AuthSession;
 		} catch {
-			localStorage.removeItem(STORAGE_KEY);
+			localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
 			return null;
 		}
 	}
@@ -99,7 +101,7 @@ export class AuthService {
 			return;
 		}
 
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+		localStorage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(session));
 	}
 
 	private clearStoredSession(): void {
@@ -107,7 +109,7 @@ export class AuthService {
 			return;
 		}
 
-		localStorage.removeItem(STORAGE_KEY);
+		localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
 	}
 
 	private createAuthHeaders(token: string): HttpHeaders {
