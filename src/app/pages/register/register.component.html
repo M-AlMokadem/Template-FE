@@ -1,0 +1,67 @@
+<section class="register-page">
+	<div class="register-copy">
+		<p class="eyebrow">Create access</p>
+		<h1>Register a new account.</h1>
+		<p>
+			This flow writes users through ASP.NET Core Identity, applies Microsoft password policies, and immediately returns a session for the Angular app.
+		</p>
+		<ul class="register-points">
+			<li>Unique email validation from the backend</li>
+			<li>Strong password requirements aligned with Identity</li>
+			<li>Immediate signed-in state after successful registration</li>
+		</ul>
+	</div>
+
+	<mat-card class="register-card" appearance="outlined">
+		<p class="card-label">New workspace user</p>
+		<h2>Register</h2>
+		<form [formGroup]="registerForm" (ngSubmit)="submit()">
+			<mat-form-field appearance="outline">
+				<mat-label>Full name</mat-label>
+				<input matInput type="text" formControlName="fullName" placeholder="Mohamed AlMokadem">
+				@if (registerForm.controls.fullName.touched && registerForm.controls.fullName.invalid) {
+					<mat-error>Enter your full name.</mat-error>
+				}
+			</mat-form-field>
+
+			<mat-form-field appearance="outline">
+				<mat-label>Email</mat-label>
+				<input matInput type="email" formControlName="email" placeholder="name@company.com">
+				@if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
+					<mat-error>Enter a valid email address.</mat-error>
+				}
+			</mat-form-field>
+
+			<mat-form-field appearance="outline">
+				<mat-label>Password</mat-label>
+				<input matInput type="password" formControlName="password" placeholder="At least 8 chars, upper, lower, digit">
+				@if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
+					<mat-error>Use at least 8 characters with upper, lower, and a digit.</mat-error>
+				}
+			</mat-form-field>
+
+			<mat-form-field appearance="outline">
+				<mat-label>Confirm password</mat-label>
+				<input matInput type="password" formControlName="confirmPassword" placeholder="Repeat password">
+				@if (registerForm.controls.confirmPassword.touched && registerForm.controls.confirmPassword.invalid) {
+					<mat-error>Confirm your password.</mat-error>
+				}
+			</mat-form-field>
+
+			@if (errorMessage()) {
+				<p class="form-error">{{ errorMessage() }}</p>
+			}
+
+			<button mat-flat-button class="submit-button" type="submit" [disabled]="isSubmitting()">
+				@if (isSubmitting()) {
+					<span>Creating account...</span>
+				} @else {
+					<span>Create account</span>
+				}
+			</button>
+		</form>
+
+		<a class="switch-link" routerLink="/login">Already have an account?</a>
+		<a class="back-link" routerLink="/">Back to home</a>
+	</mat-card>
+</section>

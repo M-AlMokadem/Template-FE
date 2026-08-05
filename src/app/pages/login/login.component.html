@@ -3,12 +3,12 @@
 		<p class="eyebrow">Secure access</p>
 		<h1>Sign in to your workspace.</h1>
 		<p>
-			Use a simple local session for now so the navigation can reflect the active user while the real backend auth flow is still pending.
+			Use the backend Identity API to authenticate with proper password hashing, lockout rules, and server-side login logging.
 		</p>
 		<ul class="login-points">
-			<li>Persistent navbar user state</li>
-			<li>Material form controls and validation</li>
-			<li>Ready to swap with API authentication later</li>
+			<li>Identity-backed login with JWT session tokens</li>
+			<li>Server-side registration and login activity logs</li>
+			<li>Navbar session state driven by the real API</li>
 		</ul>
 	</div>
 
@@ -26,15 +26,26 @@
 
 			<mat-form-field appearance="outline">
 				<mat-label>Password</mat-label>
-				<input matInput type="password" formControlName="password" placeholder="Minimum 6 characters">
+				<input matInput type="password" formControlName="password" placeholder="Minimum 8 characters">
 				@if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
-					<mat-error>Password must be at least 6 characters.</mat-error>
+					<mat-error>Password must be at least 8 characters.</mat-error>
 				}
 			</mat-form-field>
 
-			<button mat-flat-button class="submit-button" type="submit">Sign in</button>
+			@if (errorMessage()) {
+				<p class="form-error">{{ errorMessage() }}</p>
+			}
+
+			<button mat-flat-button class="submit-button" type="submit" [disabled]="isSubmitting()">
+				@if (isSubmitting()) {
+					<span>Signing in...</span>
+				} @else {
+					<span>Sign in</span>
+				}
+			</button>
 		</form>
 
+		<a class="switch-link" routerLink="/register">Create an account</a>
 		<a class="back-link" routerLink="/">Back to home</a>
 	</mat-card>
 </section>

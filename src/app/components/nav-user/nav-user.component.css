@@ -2,6 +2,12 @@
 	display: inline-flex;
 }
 
+.guest-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
 .nav-user-card {
 	display: inline-flex;
 	align-items: center;
@@ -42,8 +48,13 @@
 }
 
 .logout-button,
+.register-button,
 .login-button {
 	border-radius: 999px;
+}
+
+.register-button {
+	color: #ffffff;
 }
 
 .login-button {
@@ -65,6 +76,11 @@
 
 	.login-button {
 		width: 100%;
+	}
+
+	.guest-actions {
+		width: 100%;
+		justify-content: space-between;
 	}
 
 	.user-email {

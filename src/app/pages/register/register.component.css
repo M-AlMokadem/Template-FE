@@ -2,7 +2,7 @@
 	display: block;
 }
 
-.login-page {
+.register-page {
 	display: grid;
 	grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
 	gap: 1.5rem;
@@ -11,7 +11,7 @@
 	padding: 1.5rem 0 2rem;
 }
 
-.login-copy {
+.register-copy {
 	padding-right: 2rem;
 }
 
@@ -33,7 +33,7 @@ h1 {
 	color: #18214d;
 }
 
-.login-copy p:last-of-type {
+.register-copy p:last-of-type {
 	max-width: 34rem;
 	color: #4d5d7c;
 	font-size: 1.05rem;
@@ -41,7 +41,7 @@ h1 {
 	margin-top: 1.25rem;
 }
 
-.login-points {
+.register-points {
 	padding: 0;
 	margin: 1.5rem 0 0;
 	list-style: none;
@@ -49,7 +49,7 @@ h1 {
 	gap: 0.85rem;
 }
 
-.login-points li {
+.register-points li {
 	padding: 1rem 1.1rem;
 	border-radius: 18px;
 	background: rgba(255, 255, 255, 0.75);
@@ -58,7 +58,7 @@ h1 {
 	font-weight: 600;
 }
 
-.login-card {
+.register-card {
 	padding: 1.5rem;
 	border-radius: 28px;
 	background: rgba(255, 255, 255, 0.94);
@@ -89,17 +89,17 @@ mat-form-field {
 	width: 100%;
 }
 
-.submit-button {
-	min-height: 3rem;
-	margin-top: 0.35rem;
-	border-radius: 999px;
-}
-
 .form-error {
 	margin: 0;
 	color: #b42318;
 	font-size: 0.9rem;
 	font-weight: 600;
+}
+
+.submit-button {
+	min-height: 3rem;
+	margin-top: 0.35rem;
+	border-radius: 999px;
 }
 
 .switch-link,
@@ -116,18 +116,18 @@ mat-form-field {
 }
 
 @media (max-width: 900px) {
-	.login-page {
+	.register-page {
 		grid-template-columns: 1fr;
 		min-height: auto;
 	}
 
-	.login-copy {
+	.register-copy {
 		padding-right: 0;
 	}
 }
 
 @media (max-width: 640px) {
-	.login-card {
+	.register-card {
 		padding: 1.25rem;
 	}
 

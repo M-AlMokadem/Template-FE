@@ -7,28 +7,38 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../services/auth.service';
 
+const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+
 @Component({
-	selector: 'app-login',
+	selector: 'app-register',
 	standalone: true,
 	imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
-	templateUrl: './login.component.html',
-	styleUrl: './login.component.css'
+	templateUrl: './register.component.html',
+	styleUrl: './register.component.css'
 })
-export class LoginComponent {
+export class RegisterComponent {
 	private readonly formBuilder = inject(FormBuilder);
 	private readonly authService = inject(AuthService);
 	private readonly router = inject(Router);
 	protected readonly isSubmitting = signal(false);
 	protected readonly errorMessage = signal<string | null>(null);
 
-	protected readonly loginForm = this.formBuilder.nonNullable.group({
+	protected readonly registerForm = this.formBuilder.nonNullable.group({
+		fullName: ['', [Validators.required, Validators.minLength(3)]],
 		email: ['', [Validators.required, Validators.email]],
-		password: ['', [Validators.required, Validators.minLength(8)]]
+		password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(strongPasswordPattern)]],
+		confirmPassword: ['', [Validators.required]]
 	});
 
 	protected async submit(): Promise<void> {
-		if (this.loginForm.invalid) {
-			this.loginForm.markAllAsTouched();
+		if (this.registerForm.invalid) {
+			this.registerForm.markAllAsTouched();
+			return;
+		}
+
+		const { password, confirmPassword } = this.registerForm.getRawValue();
+		if (password !== confirmPassword) {
+			this.errorMessage.set('Password confirmation does not match.');
 			return;
 		}
 
@@ -36,7 +46,7 @@ export class LoginComponent {
 		this.errorMessage.set(null);
 
 		try {
-			await this.authService.login(this.loginForm.getRawValue());
+			await this.authService.register(this.registerForm.getRawValue());
 			await this.router.navigateByUrl('/');
 		} catch (error) {
 			this.errorMessage.set(AuthService.toMessage(error));

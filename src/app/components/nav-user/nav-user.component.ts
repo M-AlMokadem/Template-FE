@@ -21,7 +21,7 @@ export class NavUserComponent {
 			return '';
 		}
 
-		return user.name
+		return user.fullName
 			.split(' ')
 			.filter(Boolean)
 			.slice(0, 2)
@@ -30,6 +30,6 @@ export class NavUserComponent {
 	});
 
 	protected logout(): void {
-		this.authService.logout();
+		void this.authService.logout();
 	}
 }
