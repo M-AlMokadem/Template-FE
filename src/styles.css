@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+:root {
+	color-scheme: light;
+	font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body {
+	height: 100%;
+	scroll-behavior: smooth;
+}
+
+body {
+	margin: 0;
+	font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+	color: #18214d;
+}

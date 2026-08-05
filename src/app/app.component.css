@@ -1,0 +1,132 @@
+:host {
+	display: block;
+	min-height: 100vh;
+}
+
+.app-shell {
+	min-height: 100vh;
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	background:
+		radial-gradient(circle at 8% 14%, rgba(194, 65, 255, 0.65), transparent 26%),
+		radial-gradient(circle at 72% 0%, rgba(255, 106, 61, 0.72), transparent 25%),
+		radial-gradient(circle at 36% 38%, rgba(99, 194, 255, 0.9), transparent 22%),
+		linear-gradient(180deg, #6f2cff 0%, #b348ff 14%, #ff6b5d 28%, #7cd6ff 58%, #f6f8fc 59%, #f6f8fc 100%);
+}
+
+.topbar {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	min-height: 72px;
+	padding: 0 2rem;
+	background: rgba(18, 24, 38, 0.18);
+	backdrop-filter: blur(18px);
+	box-shadow: none;
+}
+
+.brand {
+	color: #ffffff;
+	text-decoration: none;
+	font-size: 1.1rem;
+	font-weight: 800;
+	letter-spacing: -0.04em;
+}
+
+.topbar-spacer {
+	flex: 1 1 auto;
+}
+
+.topbar-nav {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.topbar-nav a {
+	color: rgba(255, 255, 255, 0.92);
+	border-radius: 999px;
+}
+
+.topbar-nav a.is-active {
+	background: rgba(255, 255, 255, 0.16);
+	color: #ffffff;
+}
+
+.cta-button {
+	margin-left: 0.5rem;
+	background: #ffffff;
+	color: #1f2a44;
+}
+
+.app-main {
+	width: min(1200px, calc(100% - 2rem));
+	margin: 0 auto;
+	padding: 0.75rem 0 4rem;
+}
+
+.app-footer {
+	display: flex;
+	justify-content: space-between;
+	gap: 1.5rem;
+	padding: 2rem;
+	border-top: 1px solid rgba(15, 23, 42, 0.06);
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(14px);
+}
+
+.footer-title {
+	margin: 0;
+	font-size: 0.95rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: #16213e;
+}
+
+.footer-copy {
+	margin: 0.4rem 0 0;
+	max-width: 38rem;
+	color: #51607f;
+}
+
+.footer-links {
+	display: flex;
+	gap: 1rem;
+	align-items: flex-start;
+}
+
+.footer-links a {
+	color: #16213e;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+@media (max-width: 768px) {
+	.topbar {
+		min-height: auto;
+		padding: 1rem;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	.topbar-spacer {
+		display: none;
+	}
+
+	.topbar-nav {
+		width: 100%;
+		justify-content: space-between;
+		flex-wrap: wrap;
+	}
+
+	.app-main {
+		width: min(100%, calc(100% - 1rem));
+		padding-top: 1rem;
+	}
+
+	.app-footer {
+		padding: 1.25rem 1rem 1.5rem;
+		flex-direction: column;
+	}
+}
