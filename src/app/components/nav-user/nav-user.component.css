@@ -1,0 +1,73 @@
+:host {
+	display: inline-flex;
+}
+
+.nav-user-card {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.35rem 0.45rem 0.35rem 0.35rem;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.18);
+	backdrop-filter: blur(10px);
+	color: #ffffff;
+}
+
+.avatar {
+	display: grid;
+	place-items: center;
+	width: 2.2rem;
+	height: 2.2rem;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #635bff, #00d4ff);
+	font-size: 0.82rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+}
+
+.user-copy {
+	display: flex;
+	flex-direction: column;
+	line-height: 1.15;
+}
+
+.user-name {
+	font-size: 0.85rem;
+	font-weight: 700;
+}
+
+.user-email {
+	font-size: 0.72rem;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.logout-button,
+.login-button {
+	border-radius: 999px;
+}
+
+.login-button {
+	background: #ffffff;
+	color: #1f2a44;
+}
+
+@media (max-width: 900px) {
+	.nav-user-card {
+		width: 100%;
+		justify-content: space-between;
+	}
+}
+
+@media (max-width: 640px) {
+	:host {
+		width: 100%;
+	}
+
+	.login-button {
+		width: 100%;
+	}
+
+	.user-email {
+		display: none;
+	}
+}

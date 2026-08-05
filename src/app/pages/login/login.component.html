@@ -1,0 +1,40 @@
+<section class="login-page">
+	<div class="login-copy">
+		<p class="eyebrow">Secure access</p>
+		<h1>Sign in to your workspace.</h1>
+		<p>
+			Use a simple local session for now so the navigation can reflect the active user while the real backend auth flow is still pending.
+		</p>
+		<ul class="login-points">
+			<li>Persistent navbar user state</li>
+			<li>Material form controls and validation</li>
+			<li>Ready to swap with API authentication later</li>
+		</ul>
+	</div>
+
+	<mat-card class="login-card" appearance="outlined">
+		<p class="card-label">Welcome back</p>
+		<h2>Login</h2>
+		<form [formGroup]="loginForm" (ngSubmit)="submit()">
+			<mat-form-field appearance="outline">
+				<mat-label>Email</mat-label>
+				<input matInput type="email" formControlName="email" placeholder="name@company.com">
+				@if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
+					<mat-error>Enter a valid email address.</mat-error>
+				}
+			</mat-form-field>
+
+			<mat-form-field appearance="outline">
+				<mat-label>Password</mat-label>
+				<input matInput type="password" formControlName="password" placeholder="Minimum 6 characters">
+				@if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+					<mat-error>Password must be at least 6 characters.</mat-error>
+				}
+			</mat-form-field>
+
+			<button mat-flat-button class="submit-button" type="submit">Sign in</button>
+		</form>
+
+		<a class="back-link" routerLink="/">Back to home</a>
+	</mat-card>
+</section>

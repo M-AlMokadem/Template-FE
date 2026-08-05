@@ -1,0 +1,12 @@
+@if (currentUser(); as user) {
+	<div class="nav-user-card">
+		<div class="avatar">{{ initials() }}</div>
+		<div class="user-copy">
+			<span class="user-name">{{ user.name }}</span>
+			<span class="user-email">{{ user.email }}</span>
+		</div>
+		<button mat-button type="button" class="logout-button" (click)="logout()">Logout</button>
+	</div>
+} @else {
+	<a mat-flat-button class="login-button" routerLink="/login">Sign in</a>
+}
