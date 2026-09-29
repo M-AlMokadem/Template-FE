@@ -5,13 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
+import { PasswordFieldComponent } from '../../components/password-field/password-field.component';
 
 @Component({
 	selector: 'app-login',
 	standalone: true,
-	imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule],
+	imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, PasswordFieldComponent],
 	templateUrl: './login.component.html',
 	styleUrl: './login.component.css'
 })
@@ -22,7 +22,6 @@ export class LoginComponent {
 	private readonly route = inject(ActivatedRoute);
 	protected readonly isSubmitting = signal(false);
 	protected readonly errorMessage = signal<string | null>(null);
-	protected readonly isPasswordVisible = signal(false);
 
 	protected readonly loginForm = this.formBuilder.nonNullable.group({
 		email: ['', [Validators.required, Validators.email]],
@@ -49,7 +48,4 @@ export class LoginComponent {
 		}
 	}
 
-	protected togglePasswordVisibility(): void {
-		this.isPasswordVisible.update((visible) => !visible);
-	}
 }

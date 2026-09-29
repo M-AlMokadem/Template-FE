@@ -6,131 +6,73 @@
         <h1>Users Directory</h1>
       </div>
 
-      <form class="search-form" (ngSubmit)="search()">
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label>Search users</mat-label>
-          <input
-            matInput
-            type="text"
-            name="searchTerm"
-            placeholder="Name or email"
-            [ngModel]="searchTerm()"
-            (ngModelChange)="searchTerm.set($event)"
-            (keyup.enter)="search()"
-          >
-        </mat-form-field>
-        <button mat-flat-button type="submit">Apply</button>
-      </form>
+      <app-search-field
+        label="Search users"
+        placeholder="Name or email"
+        [value]="searchTerm()"
+        (valueChange)="searchTerm.set($event)"
+        (submitted)="search()"
+      ></app-search-field>
     </div>
 
-    <form class="create-form" (ngSubmit)="createUser()">
-      <div class="create-heading">
-        <p class="eyebrow">New account</p>
-        <h2>Create user</h2>
-      </div>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Full name</mat-label>
-        <input
-          matInput
-          type="text"
-          name="newFullName"
-          required
-          [ngModel]="newUser().fullName"
-          (ngModelChange)="newUser.set({ ...newUser(), fullName: $event })"
-        >
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Email</mat-label>
-        <input
-          matInput
-          type="email"
-          name="newEmail"
-          required
-          email
-          [ngModel]="newUser().email"
-          (ngModelChange)="newUser.set({ ...newUser(), email: $event })"
-        >
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Temporary password</mat-label>
-        <input
-          matInput
-          [type]="isNewPasswordVisible() ? 'text' : 'password'"
-          name="newPassword"
-          required
-          minlength="8"
-          [ngModel]="newUser().password"
-          (ngModelChange)="newUser.set({ ...newUser(), password: $event })"
-        >
-        <button
-          mat-icon-button
-          matSuffix
-          type="button"
-          [attr.aria-label]="isNewPasswordVisible() ? 'Hide password' : 'Show password'"
-          (click)="toggleNewPasswordVisibility()"
-        >
-          <mat-icon>{{ isNewPasswordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
-        </button>
-      </mat-form-field>
-      <button mat-flat-button color="primary" type="submit" [disabled]="isCreating()">
-        {{ isCreating() ? 'Creating...' : 'Create user' }}
-      </button>
-    </form>
+    <app-user-form
+      [value]="newUser()"
+      [isSubmitting]="isCreating()"
+      (saved)="createUser($event)"
+    ></app-user-form>
 
     @if (isLoading()) {
-      <div class="loading-box">
-        <mat-spinner diameter="34"></mat-spinner>
-        <p>Loading users...</p>
-      </div>
-    } @else {
-      @if (users().length > 0) {
-        <div class="table-wrap">
-          <table>
-            <thead>
+      <app-page-state kind="loading" title="Loading users..." message="Fetching the latest directory entries."></app-page-state>
+    } @else if (loadError()) {
+      <app-page-state
+        kind="error"
+        title="Users could not be loaded"
+        message="Check the API connection and try again."
+        (retry)="search()"
+      ></app-page-state>
+    } @else if (users().length > 0) {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th class="actions">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.id) {
               <tr>
-                <th>User</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th class="actions">Action</th>
+                <td>{{ user.fullName }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="status-pill" [class.is-active]="user.isActive">
+                    {{ user.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button mat-button type="button" (click)="toggleStatus(user)">
+                    {{ user.isActive ? 'Deactivate' : 'Activate' }}
+                  </button>
+                  <button mat-button color="warn" type="button" (click)="removeUser(user)">Delete</button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              @for (user of users(); track user.id) {
-                <tr>
-                  <td>{{ user.fullName }}</td>
-                  <td>{{ user.email }}</td>
-                  <td>
-                    <span class="status-pill" [class.is-active]="user.isActive">
-                      {{ user.isActive ? 'Active' : 'Inactive' }}
-                    </span>
-                  </td>
-                  <td class="actions">
-                    <button mat-button type="button" (click)="toggleStatus(user)">
-                      {{ user.isActive ? 'Deactivate' : 'Activate' }}
-                    </button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+            }
+          </tbody>
+        </table>
+      </div>
 
-        <div class="pager">
-          <p>
-            Showing {{ startItemIndex() }} - {{ endItemIndex() }} of {{ totalCount() }}
-          </p>
-          <div class="pager-actions">
-            <button mat-button type="button" (click)="previousPage()" [disabled]="pageNumber() <= 1">Previous</button>
-            <span>Page {{ pageNumber() }} of {{ totalPages() }}</span>
-            <button mat-button type="button" (click)="nextPage()" [disabled]="!hasNextPage()">Next</button>
-          </div>
-        </div>
-      } @else {
-        <div class="empty-state">
-          <h2>No users found</h2>
-          <p>Try a different search term or clear your filter.</p>
-        </div>
-      }
+      <app-pagination-controls
+        [pageNumber]="pageNumber()"
+        [pageSize]="pageSize()"
+        [totalCount]="totalCount()"
+        [totalPages]="totalPages()"
+        (previous)="previousPage()"
+        (next)="nextPage()"
+      ></app-pagination-controls>
+    } @else {
+      <app-page-state kind="empty" title="No users found" message="Try a different search term or clear your filter."></app-page-state>
     }
   </mat-card>
 </section>

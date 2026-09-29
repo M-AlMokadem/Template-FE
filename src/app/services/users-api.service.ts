@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { ApiResult } from '../models/api-result.model';
 import { FilterRequest } from '../models/filter-request.model';
 import { HttpResponseModel } from '../models/http-response.model';
+import { normalizeApiResponse } from '../models/normalize-api-response';
 import { PagedResult } from '../models/paged-result.model';
 import { PaginationRequest } from '../models/pagination-request.model';
 import { ApiCoreService } from './api-core.service';
@@ -70,11 +71,6 @@ export class UsersApiService {
   }
 
   private normalizeResult<T>(response: HttpResponseModel<T>): ApiResult<T> {
-    return {
-      success: response.success ?? response.succeeded ?? true,
-      statusCode: response.statusCode ?? 200,
-      data: response.data,
-      message: response.message ?? ''
-    };
+    return normalizeApiResponse(response);
   }
 }

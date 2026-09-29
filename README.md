@@ -126,6 +126,21 @@ The Users page supports:
 - Activating and deactivating users
 - Soft-deleting users through the API
 
+## Reusable UI Patterns
+
+The frontend includes reusable standalone patterns demonstrated by the Users page:
+
+- `UserFormComponent`: create/edit form layout and submit state
+- `SearchFieldComponent`: search input, clear action, and submit event
+- `PaginationControlsComponent`: page navigation and result summary
+- `PageStateComponent`: loading, empty, and retryable error states
+- `ConfirmDialogService`: reusable destructive-action confirmation dialog
+- `PasswordFieldComponent`: reactive/template-driven password input with show/hide behavior
+- `ToastService`: success and error notifications
+- `normalizeApiResponse`: one response normalization path for backend wrappers
+
+Future CRUD pages should compose these components instead of recreating their own loading, pagination, confirmation, and password-field implementations.
+
 The page uses these backend endpoints:
 
 ```text

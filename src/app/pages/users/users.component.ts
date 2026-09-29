@@ -1,30 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
+import { ConfirmDialogService } from '../../services/confirm-dialog.service';
+import { PageStateComponent } from '../../components/page-state/page-state.component';
+import { PaginationControlsComponent } from '../../components/pagination-controls/pagination-controls.component';
+import { SearchFieldComponent } from '../../components/search-field/search-field.component';
+import { UserFormComponent } from '../../components/user-form/user-form.component';
 import { FilterRequest } from '../../models/filter-request.model';
 import { PaginationRequest } from '../../models/pagination-request.model';
+import { UserFormValue } from '../../models/user-form.model';
 import { ToastService } from '../../services/toast.service';
-import { CreateUserRequest, UserSummaryDto, UsersApiService } from '../../services/users-api.service';
+import { UserSummaryDto, UsersApiService } from '../../services/users-api.service';
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     MatButtonModule,
     MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatProgressSpinnerModule
+    PageStateComponent,
+    PaginationControlsComponent,
+    SearchFieldComponent,
+    UserFormComponent
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
@@ -32,6 +32,7 @@ import { CreateUserRequest, UserSummaryDto, UsersApiService } from '../../servic
 export class UsersComponent {
   private readonly usersApi = inject(UsersApiService);
   private readonly toastService = inject(ToastService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly users = signal<UserSummaryDto[]>([]);
   protected readonly isLoading = signal(false);
@@ -41,8 +42,8 @@ export class UsersComponent {
   protected readonly totalPages = signal(1);
   protected readonly searchTerm = signal('');
   protected readonly isCreating = signal(false);
-  protected readonly isNewPasswordVisible = signal(false);
-  protected readonly newUser = signal<CreateUserRequest>({ fullName: '', email: '', password: '' });
+  protected readonly newUser = signal<UserFormValue>({ fullName: '', email: '', password: '' });
+  protected readonly loadError = signal(false);
 
   constructor() {
     void this.loadUsers();
@@ -53,12 +54,7 @@ export class UsersComponent {
     await this.loadUsers();
   }
 
-  protected async createUser(): Promise<void> {
-    const request = this.newUser();
-    if (!request.fullName.trim() || !request.email.trim() || !request.password) {
-      return;
-    }
-
+  protected async createUser(request: UserFormValue): Promise<void> {
     this.isCreating.set(true);
     try {
       await firstValueFrom(this.usersApi.create({
@@ -77,12 +73,28 @@ export class UsersComponent {
     }
   }
 
-  protected toggleNewPasswordVisibility(): void {
-    this.isNewPasswordVisible.update((visible) => !visible);
+  protected async removeUser(user: UserSummaryDto): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Delete user?',
+      message: `Delete ${user.fullName}? This action will deactivate the account.`,
+      confirmLabel: 'Delete'
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await firstValueFrom(this.usersApi.remove(user.id));
+      this.toastService.showSuccess('User deleted successfully.');
+      await this.loadUsers();
+    } catch {
+      // Global interceptor handles toast notification.
+    }
   }
 
   protected async nextPage(): Promise<void> {
-    if (!this.hasNextPage()) {
+    if (this.pageNumber() >= this.totalPages()) {
       return;
     }
 
@@ -109,31 +121,15 @@ export class UsersComponent {
     }
   }
 
-  protected hasNextPage(): boolean {
-    return this.pageNumber() < this.totalPages();
-  }
-
-  protected startItemIndex(): number {
-    if (this.totalCount() === 0) {
-      return 0;
-    }
-
-    return (this.pageNumber() - 1) * this.pageSize() + 1;
-  }
-
-  protected endItemIndex(): number {
-    return Math.min(this.pageNumber() * this.pageSize(), this.totalCount());
-  }
-
   private async loadUsers(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(false);
 
     const pagination: PaginationRequest = {
       isPaginationRequest: true,
       pageNumber: this.pageNumber(),
       pageSize: this.pageSize()
     };
-
     const filterRequest: FilterRequest = {
       searchedValue: this.searchTerm().trim(),
       columnsKey: ['fullName', 'email']
@@ -151,6 +147,7 @@ export class UsersComponent {
     } catch {
       this.users.set([]);
       this.totalCount.set(0);
+      this.loadError.set(true);
     } finally {
       this.isLoading.set(false);
     }
