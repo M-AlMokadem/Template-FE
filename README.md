@@ -104,6 +104,8 @@ The frontend authentication flow is:
 5. Protect routes with `auth.guard.ts`.
 6. Use role metadata for restricted pages such as `/users`.
 
+The backend returns a short-lived access token and a refresh token. The Angular auth service stores both values, sends the refresh token when logging out, and exposes `refresh()` for renewing the session.
+
 Current protected route:
 
 ```text

@@ -25,6 +25,8 @@ export interface RegisterPayload {
 interface AuthSession {
 	accessToken: string;
 	expiresAtUtc: string;
+	refreshToken: string;
+	refreshTokenExpiresAtUtc: string;
 	user: AuthUser;
 }
 
@@ -57,12 +59,27 @@ export class AuthService {
 		this.persistSession(response);
 	}
 
+	async refresh(): Promise<void> {
+		const refreshToken = this.sessionState()?.refreshToken;
+		if (!refreshToken) {
+			throw new Error('No refresh token is available.');
+		}
+
+		const response = await firstValueFrom(this.httpClient.post<AuthSession>(`${this.authApiUrl}/refresh`, {
+			refreshToken
+		}));
+		this.persistSession(response);
+	}
+
 	async logout(): Promise<void> {
-		const token = this.sessionState()?.accessToken;
+		const session = this.sessionState();
+		const token = session?.accessToken;
 
 		if (token) {
 			try {
-				await firstValueFrom(this.httpClient.post(`${this.authApiUrl}/logout`, {}, {
+				await firstValueFrom(this.httpClient.post(`${this.authApiUrl}/logout`, {
+					refreshToken: session?.refreshToken ?? ''
+				}, {
 					headers: this.createAuthHeaders(token)
 				}));
 			} catch {
@@ -93,6 +110,8 @@ export class AuthService {
 			const session = JSON.parse(rawValue) as AuthSession;
 			return {
 				...session,
+				refreshToken: session.refreshToken ?? '',
+				refreshTokenExpiresAtUtc: session.refreshTokenExpiresAtUtc ?? '',
 				user: {
 					...session.user,
 					roles: session.user.roles ?? []
