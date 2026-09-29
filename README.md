@@ -180,8 +180,15 @@ npm test
 Run tests in a single non-interactive pass when supported by the project configuration:
 
 ```bash
-ng test --watch=false
+npx ng test --watch=false --browsers=ChromeHeadless
 ```
+
+The current test suite includes:
+
+- API service request and response normalization tests
+- Password field component tests
+- Loading/error page-state component tests
+- Root application smoke tests
 
 Run the Angular CLI help:
 
