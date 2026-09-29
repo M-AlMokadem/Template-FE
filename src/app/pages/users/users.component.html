@@ -55,13 +55,22 @@
         <mat-label>Temporary password</mat-label>
         <input
           matInput
-          type="password"
+          [type]="isNewPasswordVisible() ? 'text' : 'password'"
           name="newPassword"
           required
           minlength="8"
           [ngModel]="newUser().password"
           (ngModelChange)="newUser.set({ ...newUser(), password: $event })"
         >
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          [attr.aria-label]="isNewPasswordVisible() ? 'Hide password' : 'Show password'"
+          (click)="toggleNewPasswordVisibility()"
+        >
+          <mat-icon>{{ isNewPasswordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
       </mat-form-field>
       <button mat-flat-button color="primary" type="submit" [disabled]="isCreating()">
         {{ isCreating() ? 'Creating...' : 'Create user' }}

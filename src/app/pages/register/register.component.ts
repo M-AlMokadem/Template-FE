@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
 
 const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
@@ -12,7 +13,7 @@ const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
 @Component({
 	selector: 'app-register',
 	standalone: true,
-	imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
+	imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule],
 	templateUrl: './register.component.html',
 	styleUrl: './register.component.css'
 })
@@ -22,6 +23,8 @@ export class RegisterComponent {
 	private readonly router = inject(Router);
 	protected readonly isSubmitting = signal(false);
 	protected readonly errorMessage = signal<string | null>(null);
+	protected readonly isPasswordVisible = signal(false);
+	protected readonly isConfirmPasswordVisible = signal(false);
 
 	protected readonly registerForm = this.formBuilder.nonNullable.group({
 		fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -53,5 +56,13 @@ export class RegisterComponent {
 		} finally {
 			this.isSubmitting.set(false);
 		}
+	}
+
+	protected togglePasswordVisibility(): void {
+		this.isPasswordVisible.update((visible) => !visible);
+	}
+
+	protected toggleConfirmPasswordVisibility(): void {
+		this.isConfirmPasswordVisible.update((visible) => !visible);
 	}
 }

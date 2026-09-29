@@ -26,7 +26,16 @@
 
 			<mat-form-field appearance="outline">
 				<mat-label>Password</mat-label>
-				<input matInput type="password" formControlName="password" placeholder="Minimum 8 characters">
+				<input matInput [type]="isPasswordVisible() ? 'text' : 'password'" formControlName="password" placeholder="Minimum 8 characters">
+				<button
+					mat-icon-button
+					matSuffix
+					type="button"
+					[attr.aria-label]="isPasswordVisible() ? 'Hide password' : 'Show password'"
+					(click)="togglePasswordVisibility()"
+				>
+					<mat-icon>{{ isPasswordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+				</button>
 				@if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
 					<mat-error>Password must be at least 8 characters.</mat-error>
 				}

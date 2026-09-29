@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
 import { FilterRequest } from '../../models/filter-request.model';
@@ -22,6 +23,7 @@ import { CreateUserRequest, UserSummaryDto, UsersApiService } from '../../servic
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatProgressSpinnerModule
   ],
   templateUrl: './users.component.html',
@@ -39,6 +41,7 @@ export class UsersComponent {
   protected readonly totalPages = signal(1);
   protected readonly searchTerm = signal('');
   protected readonly isCreating = signal(false);
+  protected readonly isNewPasswordVisible = signal(false);
   protected readonly newUser = signal<CreateUserRequest>({ fullName: '', email: '', password: '' });
 
   constructor() {
@@ -72,6 +75,10 @@ export class UsersComponent {
     } finally {
       this.isCreating.set(false);
     }
+  }
+
+  protected toggleNewPasswordVisibility(): void {
+    this.isNewPasswordVisible.update((visible) => !visible);
   }
 
   protected async nextPage(): Promise<void> {
