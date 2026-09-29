@@ -20,6 +20,12 @@ export interface UpdateUserStatusRequest {
   isActive: boolean;
 }
 
+export interface CreateUserRequest {
+  fullName: string;
+  email: string;
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,6 +47,11 @@ export class UsersApiService {
 
   getById(id: string): Observable<ApiResult<UserSummaryDto>> {
     return this.publicService.getById<UserSummaryDto>(this.usersController, id)
+      .pipe(map((response) => this.normalizeResult(response)));
+  }
+
+  create(request: CreateUserRequest): Observable<ApiResult<UserSummaryDto>> {
+    return this.publicService.post<HttpResponseModel<UserSummaryDto>>(request, this.usersController)
       .pipe(map((response) => this.normalizeResult(response)));
   }
 

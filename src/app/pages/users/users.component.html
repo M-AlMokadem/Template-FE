@@ -23,6 +23,51 @@
       </form>
     </div>
 
+    <form class="create-form" (ngSubmit)="createUser()">
+      <div class="create-heading">
+        <p class="eyebrow">New account</p>
+        <h2>Create user</h2>
+      </div>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Full name</mat-label>
+        <input
+          matInput
+          type="text"
+          name="newFullName"
+          required
+          [ngModel]="newUser().fullName"
+          (ngModelChange)="newUser.set({ ...newUser(), fullName: $event })"
+        >
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          type="email"
+          name="newEmail"
+          required
+          email
+          [ngModel]="newUser().email"
+          (ngModelChange)="newUser.set({ ...newUser(), email: $event })"
+        >
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Temporary password</mat-label>
+        <input
+          matInput
+          type="password"
+          name="newPassword"
+          required
+          minlength="8"
+          [ngModel]="newUser().password"
+          (ngModelChange)="newUser.set({ ...newUser(), password: $event })"
+        >
+      </mat-form-field>
+      <button mat-flat-button color="primary" type="submit" [disabled]="isCreating()">
+        {{ isCreating() ? 'Creating...' : 'Create user' }}
+      </button>
+    </form>
+
     @if (isLoading()) {
       <div class="loading-box">
         <mat-spinner diameter="34"></mat-spinner>

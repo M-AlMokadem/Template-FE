@@ -10,7 +10,7 @@ import { firstValueFrom } from 'rxjs';
 import { FilterRequest } from '../../models/filter-request.model';
 import { PaginationRequest } from '../../models/pagination-request.model';
 import { ToastService } from '../../services/toast.service';
-import { UserSummaryDto, UsersApiService } from '../../services/users-api.service';
+import { CreateUserRequest, UserSummaryDto, UsersApiService } from '../../services/users-api.service';
 
 @Component({
   selector: 'app-users',
@@ -38,6 +38,8 @@ export class UsersComponent {
   protected readonly totalCount = signal(0);
   protected readonly totalPages = signal(1);
   protected readonly searchTerm = signal('');
+  protected readonly isCreating = signal(false);
+  protected readonly newUser = signal<CreateUserRequest>({ fullName: '', email: '', password: '' });
 
   constructor() {
     void this.loadUsers();
@@ -46,6 +48,30 @@ export class UsersComponent {
   protected async search(): Promise<void> {
     this.pageNumber.set(1);
     await this.loadUsers();
+  }
+
+  protected async createUser(): Promise<void> {
+    const request = this.newUser();
+    if (!request.fullName.trim() || !request.email.trim() || !request.password) {
+      return;
+    }
+
+    this.isCreating.set(true);
+    try {
+      await firstValueFrom(this.usersApi.create({
+        fullName: request.fullName.trim(),
+        email: request.email.trim(),
+        password: request.password
+      }));
+      this.toastService.showSuccess('User created successfully.');
+      this.newUser.set({ fullName: '', email: '', password: '' });
+      this.pageNumber.set(1);
+      await this.loadUsers();
+    } catch {
+      // Global interceptor handles toast notification.
+    } finally {
+      this.isCreating.set(false);
+    }
   }
 
   protected async nextPage(): Promise<void> {
