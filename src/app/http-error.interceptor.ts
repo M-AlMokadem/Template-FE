@@ -47,7 +47,10 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse) {
-        const isAuthRoute = req.url.includes('/api/auth/login') || req.url.includes('/api/auth/register');
+        const isAuthRoute = req.url.includes('/api/auth/login') ||
+          req.url.includes('/api/auth/register') ||
+          req.url.includes('/api/auth/refresh') ||
+          req.url.includes('/api/auth/logout');
         if (!isAuthRoute) {
           toast.showError(toFriendlyMessage(error));
         }

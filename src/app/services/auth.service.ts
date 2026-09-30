@@ -39,6 +39,7 @@ export class AuthService {
 	private readonly httpClient = inject(HttpClient);
 	private readonly appConfigService = inject(AppConfigService);
 	private readonly sessionState = signal<AuthSession | null>(this.readStoredSession());
+	private refreshPromise: Promise<void> | null = null;
 
 	readonly currentUser = computed(() => this.sessionState()?.user ?? null);
 	readonly isAuthenticated = computed(() => this.sessionState() !== null);
@@ -60,6 +61,19 @@ export class AuthService {
 	}
 
 	async refresh(): Promise<void> {
+		if (this.refreshPromise) {
+			return this.refreshPromise;
+		}
+
+		this.refreshPromise = this.performRefresh();
+		try {
+			await this.refreshPromise;
+		} finally {
+			this.refreshPromise = null;
+		}
+	}
+
+	private async performRefresh(): Promise<void> {
 		const refreshToken = this.sessionState()?.refreshToken;
 		if (!refreshToken) {
 			throw new Error('No refresh token is available.');
@@ -93,6 +107,11 @@ export class AuthService {
 
 	getAccessToken(): string | null {
 		return this.sessionState()?.accessToken ?? null;
+	}
+
+	clearSession(): void {
+		this.sessionState.set(null);
+		this.clearStoredSession();
 	}
 
 	private readStoredSession(): AuthSession | null {
